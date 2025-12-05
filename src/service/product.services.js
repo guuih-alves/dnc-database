@@ -1,4 +1,4 @@
-import bookRepositories from "../repositories/book.repositories.js";
+import bookRepositories from "../repositories/product.repositories.js";
 
 async function createBookService(newBook, userId) {
     const createdBook = await bookRepositories.createBookRepository(
@@ -6,7 +6,7 @@ async function createBookService(newBook, userId) {
         userId
         );
         
-        if (!createdBook) throw new Error ('Error creating book');
+        if (!createdBook) throw new Error ('Error creating product');
         return createdBook;
 }
 
@@ -17,13 +17,13 @@ async function findAllBookService() {
 
 async function findBookByIdService(bookId) {
     const book = await bookRepositories.findBookByIdRepository(bookId);
-    if (!book) throw new Error ('Book not found');
+    if (!book) throw new Error ('product not found');
     return book;
 }
 
 async function updateBookservice(updateBook, bookId, userId) {
     const book = await bookRepositories.findBookByIdRepository(bookId);
-    if(!book) throw new Error ('Book not found');
+    if(!book) throw new Error ('product not found');
     if(book.userId !== userId) throw new Error ('Unauthorized');
     const response = await bookRepositories.updateBookRepository(
         updateBook, bookId
@@ -33,8 +33,8 @@ async function updateBookservice(updateBook, bookId, userId) {
 
 async function deleteBookService(bookId, userId) {
     const book = await bookRepositories.findBookByIdRepository(bookId);
-    if (!book) throw new Error ('Book not found');
-        if (book.userId !== userId) throw new Error('Unauthorizes');
+    if (!book) throw new Error ('product not found');
+       // if (book.userId !== userId) throw new Error('Unauthorizes');
         const response = await bookRepositories.deleteBookRepository(bookId);
         return response;
     

@@ -1,12 +1,17 @@
 import { Router } from "express";
-import userRouter from './user.routes.js'
-import bookRouter from './book.routes.js'
-import loanRouter from './loan.routes.js'
+
+import productRouter from './product.routes.js'
+import clientRouter from './client.routes.js'
+import saleRouter from './sales.routes.js'
+import orderRouter from './orders.routes.js'
+import inventoryRouter from './inventory.routes.js'
 
 const routers = Router();
 
-routers.use("/users", userRouter);
-routers.use("/books",bookRouter);
-routers.use("/loans",loanRouter);
+routers.use("/produtos",productRouter);
+routers.use("/clients", clientRouter);
+routers.use("/sales", saleRouter)
+routers.use("/orders", orderRouter)
+routers.use("/inventory", inventoryRouter)
 
 export { routers};

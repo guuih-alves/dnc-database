@@ -1,33 +1,34 @@
 import db from '../config/database.js'
 
-db.run(`CREATE TABLE IF NOT EXISTS books(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    author TEXT NOT NULL,
-    userId INTEGER,
-    FOREIGN KEY (userId) REFERENCES users(id)
+db.run(`CREATE TABLE IF NOT EXISTS inventory(
+    id_estoque INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_produto INTEGER,
+    quantidade INTEGER,
+    localizacao VARCHAR(20),
+    FOREIGN KEY (id_produto) REFERENCES produtos(id)
+   
     )`);
 
-    function createBookRepository( newBook, userId){
+    function createInventoryRepository( newInventory, userId){
         return new Promise((res, rej) => {
-            const { title, author } = newBook;
+            const {id_produto, quantidade, localizacao} = newInventory;
             db.run(
-                `INSERT INTO books (title, author, userId) VALUES (?,?,?)`,
-                [title, author, userId],
+                `INSERT INTO inventory (id_produto, quantidade, localizacao ) VALUES (?,?,?)`,
+                [id_produto, quantidade, localizacao],
                 function(err){
                     if (err){
                         rej(err);
                     }else {
-                        res({ id: this.lastID, ...newBook});
+                        res({ id: this.lastID, ...newInventory});
                     }
                 }
             )
         })
     }
 
-    function findAllBooksRepository(){
+    function findAllInventorRepository(){
         return new Promise((res, rej) => {
-            db.all(`SELECT * FROM books`, [], (err, rows) => {
+            db.all(`SELECT * FROM inventory`, [], (err, rows) => {
                 if(err) {
                     rej(err);
                 } else{
@@ -37,10 +38,10 @@ db.run(`CREATE TABLE IF NOT EXISTS books(
         })
     }
 
-    function findBookByIdRepository(bookId){
+    function findInventorByIdRepository(inventoryId){
         return new Promise ((res, rej) => {
-            db.get(`SELECT * FROM books WHERE id = ?`,
-                [bookId], (err, row) => {
+            db.get(`SELECT * FROM inventory WHERE id = ?`,
+                [inventoryId], (err, row) => {
                     if(err){
                         rej(err);
                     } else {
@@ -51,54 +52,54 @@ db.run(`CREATE TABLE IF NOT EXISTS books(
         })
     }
 
-    function updateBookRepository( updateBook, bookId){
+    function updateInventorRepository( updateInventory, inventoryId){
         return new Promise((res, rej) => {
-          const fields = ['title', 'author','userId']
+          const fields = ['id_produto', 'quantidade', 'localizacao',]
 
-          let query = 'UPDATE books SET'
+          let query = 'UPDATE inventory SET'
           const values = []
 
           fields.forEach((field) => {
-            if(updateBook[field] !== undefined) {
+            if(updateInventory[field] !== undefined) {
                 query += ` ${field} = ?,`
-                values.push(updateBook[field])
+                values.push(updateInventory[field])
             }
           })
 
           query = query.slice(0, -1)  // elimina ultimo elemento (no caso virgula)
           query += 'WHERE id = ?'
-          values.push(bookId)
+          values.push(inventoryId)
 
           db.run(query, values, (err) => {
             if(err){
                 rej(err)
             } else{
-                res({ id: bookId, ...updateBook});
+                res({ id: inventoryId, ...updateInventory});
 
             }
           })
         })
     }
 
-    function deleteBookRepository(bookId) {
+    function deleteInventorRepository(inventoryId) {
         return new Promise((res, rej) => {
             db.run(`
-                    DELETE FROM books
+                    DELETE FROM inventory
                     WHERE id = ? 
-                `, [bookId], function (err) {
+                `, [inventoryId], function (err) {
                     if(err) {
                         rej(err)
                     } else {
-                        res({ message: 'Book deleted deleted', bookId})
+                        res({ message: 'Item deletado', inventoryId})
                     }
                 })
         })
     }
 
-    function searchBookRepository(search){
+    function searchInventorRepository(search){
         return new Promise(( res, rej) => {
             db.all(`
-                SELECT * FROM books WHERE
+                SELECT * FROM inventory WHERE
                 title LIKE ? OR author LIKE ?`,
             [`%${search}%` , `%${search}%`],   // ira buscar caracteres da palavra , cada Search refere a cada variavel
             (err, rows) => {
@@ -113,10 +114,10 @@ db.run(`CREATE TABLE IF NOT EXISTS books(
     }
 
     export default{
-        createBookRepository,
-        findAllBooksRepository,
-        findBookByIdRepository,
-        updateBookRepository,
-        deleteBookRepository,
-        searchBookRepository
+        createInventoryRepository,
+        findAllInventorRepository,
+        findInventorByIdRepository,
+        updateInventorRepository,
+        deleteInventorRepository,
+        searchInventorRepository
     }
